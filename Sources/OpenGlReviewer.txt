@@ -1,0 +1,219 @@
+#include<iostream>
+#include<glad/glad.h>
+#include<GLFW/glfw3.h>
+
+//source code for vertex Shader
+const char* vertexShaderSource = "#version 330 core\n"
+"layout(location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+//source code for fragment Shader
+const char* fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"	FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+"}\n\0";
+
+/*now we need shaders, shaders are an opengl object and these
+are just kind of like in the background in the memory, and we can
+only access them by references aka value, in fact, all opengl
+objects are accessed by a reference*/
+
+
+int main()
+{
+	//initializes the glfw so that we can access its functions
+	if (glfwInit() != GLFW_TRUE) {
+		fprintf(stderr, "Failed to initialized! \n");
+		return -1;
+	}
+
+	//tells the glfw what version are we going to use for this program (3.3)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//tell glfw that we are using the Core Profile
+	// so that means we only have the modern functions
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	//Array of data float; every succeeding 3 float will represent one coordinate
+	// coordinates should only be between -1 to +1
+	GLfloat vertices[] =
+	{
+		//Index Buffer Lesson for the 6 vertices
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, //Lower left corner
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, //Lower right corner
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, //Upper corner
+		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, //Inner left
+		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, //Inner right
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f, //Inner down
+	};
+
+	//this is now for the indices of the complex triangle (raw vertices)
+	GLuint indices[] =
+	{
+		0, 3, 5, //Lower left triangle
+		3, 2, 4, //Lower right triangle
+		5, 4, 1 //Upper triangle
+	};
+
+	//instantiate a glfwwindow object   width-height-    TitleBar      -ifFullScreen-not that important
+	GLFWwindow* window = glfwCreateWindow(800, 800, "Emerson Celestial", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	//introduce the window object into the current context
+	glfwMakeContextCurrent(window);
+
+	//load the needed configurations for openGl
+	gladLoadGL();
+
+	//GLuint - openGl version of an unsigned integer
+	/*we instantiate a shader by assigning the glCreateShader function and inside of it
+	must be the desired type of shader*/
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//we'll now pass the vetex shader source to the vertex shader object
+	//    VSObject-number of strings in the source-the source name-not really important
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	/*the gpu can't understand the source code that the vertex shader have right now,
+	so we need to call glCompileShader to a machine code*/
+	glCompileShader(vertexShader);
+
+	//for the fragment shader, this is just the same to the vertexShader above
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	/*to actually use both of these shaders, we need to wrap them up into something
+	called a shader program*/
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	//now we need to wrap up all the attach shaders in our program
+	glLinkProgram(shaderProgram);
+
+	/*now it is recommended to delete the shaders that we've created since those
+	two are already in the shaderProgram itself*/
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+
+	/*Now we have a packed object with our vertex data, but opengl doesn't even know where to even
+	find it.Now, we make use of the Vertex array object.
+	This source points to one or more VBOs and tells openGL how to interpret them*/
+	/*Make sure to generate the VAO first before the VBO, ordering is important*/
+	GLuint VAO;
+	//now we'll create a VBO to store our vertex data
+	/*VBO is actually an array of references or object, but where only gonna use
+	1 sample object for now; so if there are two, then GLuint VBO[2]*/
+	GLuint VBO;
+	//for index buffer
+	GLuint EBO;
+	//create/generate the VAO
+	// number of object - referecene of the VAO
+	glGenVertexArrays(1, &VAO);
+	//create the object
+	//inside of it is the number of objects  and the VBO reference
+	glGenBuffers(1, &VBO);
+	//for Index buffer
+	glGenBuffers(1, &EBO);
+	//binding VAO
+	glBindVertexArray(VAO);
+	/*binding(openGL) - we make a certain object to be the current object, and whenever
+	we fire a funciton that would modify that type of object, it modifies that current
+	object/bindded object*/
+	/*bind it using glBindBuffer; GL_ARRAY_BUFFER(type for the vertex buffer object)
+	and the value of the VBO*/
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	//now, let us store our vertices that we made earlier in our VBO
+	/* Inside the function: type of buffer - the total size of data in bytes - the actual data - 
+	specification of the use of data*/
+	/*stream means that the vertices will be modified once and used a few times
+	Specification on the use of data:
+	stream Static - means that the vertices willbe modified once and used many times
+	stream Dynamic - means that it will be modified multiple times and used many times
+	Draw - means that the vertices will be modified and be used to draw an image on the
+	screen
+	Read - means it will read the vertices data
+	Copy - means that it will copy the data to a specified place*/
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//for Index Buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	/*Now, let's configure it so openGL knows how to configure VBO*/
+	/*Inside the function: the index of the vertex attribute we want to use - 
+	how many values we have per vertex - what kind of values we have - if we have values 
+	that are integer - stride of our vertices (the data between each vertex) - 
+	offset, a pointer to where our vertices begin in the array, but usually it starts from 
+	the beginning so it will be "(void*)0"*/
+	// a vertex attribute is a way of communicationg with a vertex shader from the outside
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//in order to use the attribute, we need to enable it
+	// it is set to '0' because that is the position of our vertexAttribute
+	glEnableVertexAttribArray(0);
+
+	//just to be sure that we won't accidentally a VBA or VBO with a function
+	// we combined both the vbo and voa by binding to zero
+	//ordering matters
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	//unbinding the EBO(index buffer)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	// Main while loop
+	while (!glfwWindowShouldClose(window))
+	{
+		//tell which area of the window we want openGl to render in
+		// In this case, the viewport goes from x = 0, y = 0, to x = 800, y = 800
+		glViewport(0, 0, 800, 800);
+
+		//Specify the color of the background
+		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		//clear the main buffer/current screen
+		glClear(GL_COLOR_BUFFER_BIT);
+		//activate the shader program
+		glUseProgram(shaderProgram);
+		//bind the VAO to tell openGl that we will use this
+		glBindVertexArray(VAO);
+
+		/*
+		//this is for the drawing function
+		//inside the parameter : type of primitive we'll use - the starting index of the vertices -
+		//amount of vertices we want to draw
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		*/
+
+		/*drawing the elements in a index buffer*/
+		//function parameters: the primitive we want to use - the number of indices we'll draw -
+		//the datatype of our indices - the first index of our indices
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
+		//swaps the main buffer and the back buffer
+		glfwSwapBuffers(window);
+
+		// Take care of all GLFW event
+		glfwPollEvents();
+	}
+
+	//deleting all the objects we've made
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteProgram(shaderProgram);
+
+	//Delete window before ending the program
+	glfwDestroyWindow(window);
+	//Terminate GLFW before ending the program
+	glfwTerminate();
+	return 0;
+}

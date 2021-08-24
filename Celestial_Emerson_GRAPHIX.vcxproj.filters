@@ -18,12 +18,29 @@
     <None Include="packages.config" />
     <None Include="Shaders\fragment.shader" />
     <None Include="Shaders\vertex.shader" />
+    <None Include="Shaders\gouraud_vertex.shader" />
+    <None Include="Shaders\gouraud_fragment.shader" />
+    <None Include="Shaders\phong_vertex.shader" />
+    <None Include="Shaders\phong_fragment.shader" />
+    <None Include="Shaders\phong_directional_fragment.shader" />
+    <None Include="Shaders\phong_spotlight_fragment.shader" />
+    <None Include="Shaders\skybox_fragment.shader" />
+    <None Include="Shaders\skybox_vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Classes\InputHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Classes\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Classes\shaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Classes\Reviewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -40,5 +57,21 @@
     <ClInclude Include="Sources\Classes\InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Classes\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Classes\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Classes\shaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Sources\OpenGlReviewer.txt" />
+    <Text Include="Sources\LoadObjectFilesHW.txt" />
   </ItemGroup>
 </Project>
