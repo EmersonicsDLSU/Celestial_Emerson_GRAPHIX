@@ -295,7 +295,7 @@ int main() {
 		//directional light will also rotate
 		//std::cout << xFactor1 << std::endl;
 		//glUniform3f(lightPoscLoc, glm::radians(xFactor1 * 1.0), 0.0f, 0.0f); //changes
-		
+
 		// incerement rotation by deltaTime
 		xFactor1 += deltaTime * xSpeed1;
 		prevTime = currentTime;

@@ -165,7 +165,7 @@ void LoadObjToMemory(ObjData* objData, GLfloat scaleFactor, GLfloat tOffset[]) {
 
 			if (idx.normal_index >= 0)
 			{
-				vertexData.normal ={
+				vertexData.normal = {
 					objData->attrib.normals[size_t(idx.normal_index) * 3 + 0],
 					objData->attrib.normals[size_t(idx.normal_index) * 3 + 1],
 					objData->attrib.normals[size_t(idx.normal_index) * 3 + 2]
@@ -229,7 +229,7 @@ void LoadObjToMemory(ObjData* objData, GLfloat scaleFactor, GLfloat tOffset[]) {
 		sizeof(VertexData),
 		(void*)offsetof(VertexData, uv)
 	);
-	
+
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(
 		2,

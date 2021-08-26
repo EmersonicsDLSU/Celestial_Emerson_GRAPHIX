@@ -34,12 +34,6 @@
     <ClCompile Include="Sources\Classes\InputHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Classes\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Classes\shaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Classes\Reviewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,12 +52,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Classes\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Classes\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Classes\shaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\skybox.h">
